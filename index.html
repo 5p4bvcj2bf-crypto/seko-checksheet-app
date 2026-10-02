@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>施工チェックシート - キッチン取付工事</title>
+  <style>
+    :root {
+      --primary: #E67E22;
+      --primary-dark: #D35400;
+      --success: #27AE60;
+      --danger: #E74C3C;
+      --warning: #F39C12;
+      --bg: #F5F6FA;
+      --card: #FFFFFF;
+      --text: #2C3E50;
+      --text-light: #7F8C8D;
+      --border: #E0E0E0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .header h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .header p { font-size: 0.85rem; opacity: 0.9; }
+
+    /* Container */
+    .container { max-width: 640px; margin: 0 auto; padding: 12px; }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form elements */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .form-group input[type="text"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 12px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #FAFBFC;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    /* Checkbox item */
+    .check-item {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      background: #FAFBFC;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .check-item.checked {
+      border-color: var(--success);
+      background: #F0FFF4;
+      box-shadow: 0 0 0 3px rgba(39,174,96,0.1);
+    }
+    .check-item.checked .check-header { color: var(--success); }
+
+    .check-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .check-header input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      accent-color: var(--success);
+      margin-top: 2px;
+    }
+    .check-header .check-num {
+      background: var(--primary);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .check-header .check-text { flex: 1; }
+    .check-standard {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin: 8px 0 0 44px;
+      line-height: 1.5;
+    }
+
+    /* Photo upload */
+    .photo-section {
+      margin-top: 12px;
+      margin-left: 44px;
+    }
+    .photo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .photo-btn:active { background: #E8E8E8; }
+    .photo-input { display: none; }
+    .photo-preview {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .photo-thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+
+    /* Measurement input */
+    .measure-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+      margin-left: 44px;
+    }
+    .measure-row input { flex: 1; }
+    .measure-row span { color: var(--text-light); font-size: 0.85rem; white-space: nowrap; }
+
+    /* Result section */
+    .result-section { margin-top: 16px; }
+    .result-options {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .result-option {
+      flex: 1;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+    .result-option.selected-pass {
+      border-color: var(--success);
+      background: #F0FFF4;
+      color: var(--success);
+    }
+    .result-option.selected-fail {
+      border-color: var(--danger);
+      background: #FFF5F5;
+      color: var(--danger);
+    }
+    .result-option .icon { font-size: 1.8rem; margin-bottom: 4px; display: block; }
+    .result-option .label { font-weight: 700; font-size: 1rem; }
+
+    .correction-box {
+      display: none;
+      margin-top: 12px;
+    }
+    .correction-box.show { display: block; }
+
+    /* Signature */
+    .sign-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 400px) { .sign-grid { grid-template-columns: 1fr; } }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(230,126,34,0.3);
+      transition: transform 0.1s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+    .submit-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 6px rgba(230,126,34,0.3);
+    }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Status */
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 99;
+      font-size: 0.8rem;
+    }
+    .status-bar .saved { color: var(--success); font-weight: 600; }
+    .status-bar .unsaved { color: var(--warning); font-weight: 600; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+    }
+    .modal .icon { font-size: 3rem; margin-bottom: 12px; }
+    .modal h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .modal p { color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px; }
+    .modal-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .modal-btn.primary { background: var(--primary); color: white; }
+    .modal-btn.secondary { background: var(--bg); color: var(--text); }
+
+    /* Progress */
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card { animation: fadeIn 0.3s ease; }
+
+    /* Required marker */
+    .required::after { content: " *"; color: var(--danger); }
+
+    /* Android / LINE Browser fixes */
+    @supports (-webkit-touch-callout: none) {
+      /* iOS specific */
+      body { -webkit-text-size-adjust: 100%; }
+    }
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      /* Android Chrome: prevent zoom on focus */
+      input, select, textarea { font-size: 16px !important; }
+    }
+    /* Keyboard visible state */
+    body.keyboard-open .header { position: relative; }
+    body.keyboard-open .submit-btn { position: relative; margin-bottom: 20px; }
+    /* Android date input fix */
+    input[type="date"] { min-height: 48px; }
+    /* Safe area for notches */
+    .header { padding-top: max(24px, env(safe-area-inset-top)); }
+    .container { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>施工チェックシート</h1>
+    <p>キッチン取付工事 — クレーム対策</p>
+  </div>
+
+  <div class="container">
+
+    <!-- 基本情報 -->
+    <div class="card">
+      <div class="card-title">📋 基本情報</div>
+      <div class="form-group">
+        <label class="required">現場名</label>
+        <input type="text" id="siteName" placeholder="例：東京都渋谷区○○マンション">
+      </div>
+      <div class="form-group">
+        <label class="required">業者名</label>
+        <input type="text" id="companyName" placeholder="例：○○設備株式会社">
+      </div>
+      <div class="form-group">
+        <label class="required">施工日</label>
+        <input type="date" id="workDate">
+      </div>
+      <div class="form-group">
+        <label class="required">担当者名</label>
+        <input type="text" id="workerName" placeholder="例：山田 太郎">
+      </div>
+    </div>
+
+    <!-- チェック項目 -->
+    <div class="card">
+      <div class="card-title">✅ 確認項目</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+
+      <!-- ① -->
+      <div class="check-item" data-index="1">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">1</span>
+          <span class="check-text">幕板の固定状態</span>
+        </label>
+        <p class="check-standard">全ビス完全締結。手で押しても動かない</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo1').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo1" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview1')">
+          <div class="photo-preview" id="preview1"></div>
+        </div>
+      </div>
+
+      <!-- ② -->
+      <div class="check-item" data-index="2">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">2</span>
+          <span class="check-text">幕板カット寸法</span>
+        </label>
+        <p class="check-standard">3回チェック実施／当て合わせ（仮当て）完了</p>
+        <div class="measure-row">
+          <input type="text" class="measure-input" id="measure2" placeholder="実測値">
+          <span>mm</span>
+        </div>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo2').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo2" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview2')">
+          <div class="photo-preview" id="preview2"></div>
+        </div>
+      </div>
+
+      <!-- ③ -->
+      <div class="check-item" data-index="3">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">3</span>
+          <span class="check-text">幕板・パネルのエッジ処理</span>
+        </label>
+        <p class="check-standard">面取り・バリ取り済み。手で触れて引っかかりがない</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo3').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo3" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview3')">
+          <div class="photo-preview" id="preview3"></div>
+        </div>
+      </div>
+
+      <!-- ④ -->
+      <div class="check-item" data-index="4">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">4</span>
+          <span class="check-text">水平・レベル</span>
+        </label>
+        <p class="check-standard">水平器で確認し、水平器を載せた写真を撮影済み</p>
+        <div class="measure-row">
+          <input type="text" class="measure-input" id="measure4" placeholder="誤差">
+          <span>mm／1m</span>
+        </div>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo4').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo4" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview4')">
+          <div class="photo-preview" id="preview4"></div>
+        </div>
+      </div>
+
+      <!-- ⑤ -->
+      <div class="check-item" data-index="5">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">5</span>
+          <span class="check-text">KP開口部・切断面</span>
+        </label>
+        <p class="check-standard">現場カット。切断面の露出なし。防錆剤塗布・エッジカバー取付済み</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo5').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo5" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview5')">
+          <div class="photo-preview" id="preview5"></div>
+        </div>
+      </div>
+
+      <!-- ⑥ -->
+      <div class="check-item" data-index="6">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">6</span>
+          <span class="check-text">コーキング</span>
+        </label>
+        <p class="check-standard">全周打設・完成（交換予定部材があっても打設済み）</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo6').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo6" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview6')">
+          <div class="photo-preview" id="preview6"></div>
+        </div>
+      </div>
+
+      <!-- ⑦ -->
+      <div class="check-item" data-index="7">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">7</span>
+          <span class="check-text">建具・引き出し・扉調整</span>
+        </label>
+        <p class="check-standard">開閉スムーズ。ソフトクローズ機能正常</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo7').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo7" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview7')">
+          <div class="photo-preview" id="preview7"></div>
+        </div>
+      </div>
+
+      <!-- ⑧ -->
+      <div class="check-item" data-index="8">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">8</span>
+          <span class="check-text">重量物取付（該当時のみ）</span>
+        </label>
+        <p class="check-standard">指定治具「相棒くん」を使用。特に重い天板は2人体制で施工</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo8').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo8" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview8')">
+          <div class="photo-preview" id="preview8"></div>
+        </div>
+      </div>
+
+      <!-- ⑨ -->
+      <div class="check-item" data-index="9">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">9</span>
+          <span class="check-text">周辺養生・傷確認</span>
+        </label>
+        <p class="check-standard">養生撤去後、建築部材に傷・破損なし</p>
+        <div class="photo-section">
+          <label class="photo-btn" onclick="document.getElementById('photo9').click()">
+            📷 写真を撮影
+          </label>
+          <input type="file" id="photo9" class="photo-input" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'preview9')">
+          <div class="photo-preview" id="preview9"></div>
+        </div>
+      </div>
+
+      <!-- ⑩ -->
+      <div class="check-item" data-index="10">
+        <label class="check-header">
+          <input type="checkbox" class="check-box">
+          <span class="check-num">10</span>
+          <span class="check-text">完了写真記録</span>
+        </label>
+        <p class="check-standard">通常写真と水平写真 計10枚を撮影し、提出用アルバムに保存</p>
+        <p style="margin-left:44px; margin-top:8px; font-size:0.8rem; color:var(--text-light);">
+          ※現場でスマホカメラで撮影後、提出用アルバムにアップロードしてください
+        </p>
+      </div>
+    </div>
+
+    <!-- 総合判定 -->
+    <div class="card">
+      <div class="card-title">🏁 総合判定</div>
+      <div class="result-options">
+        <div class="result-option" id="optPass" onclick="selectResult('pass')">
+          <span class="icon">✅</span>
+          <span class="label">合格</span>
+        </div>
+        <div class="result-option" id="optFail" onclick="selectResult('fail')">
+          <span class="icon">⚠️</span>
+          <span class="label">要修正</span>
+        </div>
+      </div>
+      <div class="correction-box" id="correctionBox">
+        <div class="form-group" style="margin-top:12px;">
+          <label>是正内容</label>
+          <textarea id="correctionText" placeholder="修正が必要な項目と内容を記入してください"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 確認者 -->
+    <div class="card">
+      <div class="card-title">📝 確認者</div>
+      <div class="sign-grid">
+        <div class="form-group">
+          <label class="required">施工担当者</label>
+          <input type="text" id="signWorker" placeholder="氏名">
+        </div>
+        <div class="form-group">
+          <label class="required">番頭確認者</label>
+          <input type="text" id="signLeader" placeholder="氏名">
+        </div>
+        <div class="form-group">
+          <label class="required">確認日</label>
+          <input type="date" id="signDate">
+        </div>
+      </div>
+    </div>
+
+    <!-- 送信 -->
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+      チェックシートを送信
+    </button>
+
+    <div style="height: 60px;"></div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="icon" id="modalIcon">🎉</div>
+      <h2 id="modalTitle">送信完了</h2>
+      <p id="modalText">チェックシートが送信されました。</p>
+      <p id="modalPdfLink" style="display:none; margin-bottom:16px; word-break:break-all; font-size:0.85rem;">
+        <a href="#" id="modalPdfUrl" target="_blank" style="color:var(--primary);">PDFを表示</a>
+      </p>
+      <button class="modal-btn primary" id="modalPrimary" onclick="closeModal()">閉じる</button>
+      <button class="modal-btn secondary" id="modalSecondary" onclick="shareLine()" style="display:none">LINEで報告</button>
+    </div>
+  </div>
+
+  <script>
+    // === 設定（GAS連携を使う場合はここにURLを設定）===
+    const GAS_URL = '';
+
+    // 写真プレビュー
+    function previewPhotos(input, previewId) {
+      const preview = document.getElementById(previewId);
+      const files = input.files;
+      for (let f of files) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'photo-thumb';
+          preview.appendChild(img);
+          saveToLocal();
+        };
+        reader.readAsDataURL(f);
+      }
+    }
+
+    // チェックボックススタイル更新 + 進捗
+    document.querySelectorAll('.check-box').forEach(cb => {
+      cb.addEventListener('change', function() {
+        this.closest('.check-item').classList.toggle('checked', this.checked);
+        updateProgress();
+        saveToLocal();
+      });
+    });
+
+    function updateProgress() {
+      const total = document.querySelectorAll('.check-box').length;
+      const checked = document.querySelectorAll('.check-box:checked').length;
+      document.getElementById('progressBar').style.width = (checked/total*100) + '%';
+    }
+
+    // 総合判定
+    let resultValue = '';
+    function selectResult(val) {
+      resultValue = val;
+      document.getElementById('optPass').className = 'result-option' + (val==='pass'?' selected-pass':'');
+      document.getElementById('optFail').className = 'result-option' + (val==='fail'?' selected-fail':'');
+      document.getElementById('correctionBox').classList.toggle('show', val==='fail');
+      saveToLocal();
+    }
+
+    // 自動保存
+    function saveToLocal() {
+      const data = collectData();
+      localStorage.setItem('checksheetDraft', JSON.stringify(data));
+    }
+
+    function collectData() {
+      const checks = [];
+      document.querySelectorAll('.check-item').forEach(item => {
+        const idx = item.dataset.index;
+        checks.push({
+          index: idx,
+          checked: item.querySelector('.check-box').checked,
+          measure: item.querySelector('.measure-input')?.value || ''
+        });
+      });
+      return {
+        siteName: document.getElementById('siteName').value,
+        companyName: document.getElementById('companyName').value,
+        workDate: document.getElementById('workDate').value,
+        workerName: document.getElementById('workerName').value,
+        checks: checks,
+        result: resultValue,
+        correction: document.getElementById('correctionText').value,
+        signWorker: document.getElementById('signWorker').value,
+        signLeader: document.getElementById('signLeader').value,
+        signDate: document.getElementById('signDate').value,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    // 入力監視
+    ['siteName','companyName','workDate','workerName','correctionText','signWorker','signLeader','signDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', saveToLocal);
+    });
+
+    // 送信
+    async function submitForm() {
+      const btn = document.getElementById('submitBtn');
+      const data = collectData();
+
+      // バリデーション
+      if(!data.siteName||!data.companyName||!data.workDate||!data.workerName) {
+        showModal('⚠️','入力不足','現場名・業者名・施工日・担当者名は必須です',false); return;
+      }
+      if(!resultValue) { showModal('⚠️','総合判定未選択','合格または要修正を選択してください',false); return; }
+      if(!data.signWorker||!data.signLeader||!data.signDate) {
+        showModal('⚠️','確認者未入力','施工担当者・番頭確認者・確認日は必須です',false); return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '送信中...';
+
+      // GAS送信（設定時のみ）
+      if(GAS_URL) {
+        try {
+          const res = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {'Content-Type':'application/json'}
+          });
+          const json = await res.json();
+          if(json.success) {
+            localStorage.removeItem('checksheetDraft');
+            window.lastPdfUrl = json.pdfUrl || '';
+            const msg = window.lastPdfUrl
+              ? 'チェックシートが送信されました。PDFを生成しました。'
+              : 'チェックシートが送信されました。';
+            showModal('🎉','送信完了',msg,true);
+          } else {
+            throw new Error(json.error||'送信エラー');
+          }
+        } catch(e) {
+          // GAS失敗時はLINE報告へフォールバック
+          sendByLine(data);
+        }
+      } else {
+        // GAS未設定時: LINEで報告
+        sendByLine(data);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'チェックシートを送信';
+    }
+
+    // LINEで報告（サーバー不要）
+    function sendByLine(data) {
+      const checks = {};
+      if(data.checks) {
+        data.checks.forEach(c => { checks[c.index] = c; });
+      }
+
+      let text = `【施工チェック完了】\n`;
+      text += `現場：${data.siteName || ''}\n`;
+      text += `業者：${data.companyName || ''}\n`;
+      text += `日付：${data.workDate || ''}\n`;
+      text += `担当：${data.workerName || ''}\n\n`;
+
+      const items = [
+        '①幕板固定', '②カット寸法', '③エッジ処理', '④水平レベル',
+        '⑤KP開口部', '⑥コーキング', '⑦建具調整', '⑧重量物取付',
+        '⑨養生確認', '⑩完了写真'
+      ];
+      items.forEach((name, i) => {
+        const c = checks[i+1];
+        const status = c?.checked ? 'OK' : '-';
+        const val = c?.measure ? ` ${c.measure}` : '';
+        text += `${name}:${status}${val}\n`;
+      });
+
+      text += `\n判定：${data.result==='pass'?'合格':'要修正'}\n`;
+      text += `担当：${data.signWorker || ''}\n`;
+      text += `確認：${data.signLeader || ''}\n`;
+
+      const lineUrl = 'https://line.me/R/msg/text/?' + encodeURIComponent(text);
+      window.location.href = lineUrl;
+      localStorage.removeItem('checksheetDraft');
+      showModal('📱','LINEで報告してください','LINEが開きました。送信先を選んで送信してください。',false);
+    }
+
+    // Modal
+    function showModal(icon,title,text,showShare) {
+      document.getElementById('modalIcon').textContent = icon;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalText').textContent = text;
+      document.getElementById('modalSecondary').style.display = showShare?'block':'none';
+      const pdfLink = document.getElementById('modalPdfLink');
+      const pdfUrl = document.getElementById('modalPdfUrl');
+      if(window.lastPdfUrl) {
+        pdfUrl.href = window.lastPdfUrl;
+        pdfLink.style.display = 'block';
+      } else {
+        pdfLink.style.display = 'none';
+      }
+      document.getElementById('modal').classList.add('show');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+
+    // LINE共有
+    function shareLine() {
+      const data = collectData();
+      let summary = `【施工チェック完了】\n現場：${data.siteName}\n判定：${data.result==='pass'?'合格':'要修正'}\n担当：${data.workerName}\n日付：${data.workDate}`;
+      if(window.lastPdfUrl) {
+        summary += `\nPDF：${window.lastPdfUrl}`;
+      }
+      const url = 'https://line.me/R/msg/text/?' + encodeURIComponent(summary);
+      window.open(url, '_blank');
+    }
+
+    // 下書き復元
+    window.addEventListener('load', () => {
+      const draft = localStorage.getItem('checksheetDraft');
+      if(draft) {
+        try {
+          const d = JSON.parse(draft);
+          if(d.siteName) document.getElementById('siteName').value = d.siteName;
+          if(d.companyName) document.getElementById('companyName').value = d.companyName;
+          if(d.workDate) document.getElementById('workDate').value = d.workDate;
+          if(d.workerName) document.getElementById('workerName').value = d.workerName;
+          if(d.result) selectResult(d.result);
+          if(d.correction) document.getElementById('correctionText').value = d.correction;
+          if(d.signWorker) document.getElementById('signWorker').value = d.signWorker;
+          if(d.signLeader) document.getElementById('signLeader').value = d.signLeader;
+          if(d.signDate) document.getElementById('signDate').value = d.signDate;
+          if(d.checks) {
+            d.checks.forEach(c => {
+              const item = document.querySelector(`.check-item[data-index="${c.index}"]`);
+              if(item) {
+                item.querySelector('.check-box').checked = c.checked;
+                item.classList.toggle('checked', c.checked);
+                if(c.measure && item.querySelector('.measure-input')) {
+                  item.querySelector('.measure-input').value = c.measure;
+                }
+              }
+            });
+            updateProgress();
+          }
+        } catch(e){}
+      }
+      // 今日の日付をデフォルト
+      if(!document.getElementById('workDate').value) {
+        document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
+      }
+    });
+
+    // ===== Android / LINE Browser Compatibility =====
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = ua.indexOf('android') > -1;
+    const isLine = ua.indexOf('line') > -1;
+
+    // Android: fix file input capture compatibility
+    if(isAndroid) {
+      document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('click', function() {
+          this.setAttribute('capture', 'environment');
+        });
+      });
+    }
+
+    // Keyboard show/hide detection for layout fixes
+    const initialHeight = window.innerHeight;
+    window.addEventListener('resize', () => {
+      if(window.innerHeight < initialHeight * 0.75) {
+        document.body.classList.add('keyboard-open');
+      } else {
+        document.body.classList.remove('keyboard-open');
+      }
+    });
+
+    // LINE browser: notify if opened in LINE
+    if(isLine) {
+      console.log('LINE browser detected');
+    }
+  </script>
+</body>
+</html>
